@@ -1,3 +1,3 @@
 git add .
-git commit -m "添加demo"
+git commit -m "add demo"
 git push origin master
