@@ -10,7 +10,7 @@ class Counters extends Component {
     this.setState({ counters });
   };
   handleAdd = counter => {
-    const counters = this.state.counters;
+    const counters =  this.state.counters;
     const index = counters.indexOf(counter)
     counters[index].value++
     this.setState({counters})

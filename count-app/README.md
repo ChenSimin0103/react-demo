@@ -1,3 +1,6 @@
+## 开发中的要点记录
+1. 组件的props传入值的校验，使用 prop-types 这个库
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
