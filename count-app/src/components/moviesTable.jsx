@@ -1,12 +1,16 @@
 import React, { Component } from "react";
-import TableHeader from "./common/tableHeader";
-import TableBody from "./common/tableBody";
+import { Link } from "react-router-dom";
+import Table from "./common/table";
 
 class MoviesTable extends Component {
   // 注意：点击排序标签变换顺序，是组件自己的事，所以转移责任 到组件内
   // 配置 表头
   columns = [
-    { path: "title", label: "Title" },
+    {
+      path: "title",
+      label: "Title",
+      content: movie => <Link to={`/movies/${movie._id}`}>{movie.title}</Link>
+    },
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
@@ -30,14 +34,12 @@ class MoviesTable extends Component {
     const { onSort } = this.props;
 
     return (
-      <table className="table">
-        <TableHeader
-          columns={this.columns}
-          sortColumn={sortColumn}
-          onSort={onSort}
-        />
-        <TableBody data={movies} columns={this.columns} />
-      </table>
+      <Table
+        columns={this.columns}
+        data={movies}
+        sortColumn={sortColumn}
+        onSort={onSort}
+      />
     );
   }
 }

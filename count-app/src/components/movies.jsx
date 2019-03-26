@@ -1,13 +1,16 @@
-import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
-import { getGenres } from "../services/fakeGenreService";
-import _ from "lodash";
+import React, { Component } from 'react';
+import { getMovies } from '../services/fakeMovieService';
+import { getGenres } from '../services/fakeGenreService';
+import _ from 'lodash';
+import { Link } from 'react-router-dom';
+import Pagination from './common/pagination';
+import ListGroup from './common/listGroup';
+import MoviesTable from './moviesTable';
 
-import Pagination from "./common/pagination";
-import ListGroup from "./common/listGroup";
-import MoviesTable from "./moviesTable";
+import { paginate } from '../utils/paginate';
+import SearchBox from './common/searchBox';
 
-import { paginate } from "../utils/paginate";
+import {toast} from 'react-toastify'
 
 class Movies extends Component {
   state = {
@@ -18,11 +21,13 @@ class Movies extends Component {
     // 这个值初始化为空对象??
     selectGenre: {},
     // 用于排序 asc为顺序排 desc为逆序排
-    sortColumn: { path: "title", order: "asc" }
+    sortColumn: { path: 'title', order: 'asc' },
+    // 用于输入名称搜索
+    searchQuery: '',
   };
   // 自此钩子中初始化数据
   componentDidMount() {
-    const genres = [{ name: "All Genres", _id: "" }, ...getGenres()];
+    const genres = [{ name: 'All Genres', _id: '' }, ...getGenres()];
 
     this.setState({ movies: getMovies(), genres });
   }
@@ -37,31 +42,49 @@ class Movies extends Component {
   };
   // 分类组件点击事件
   handleGenresSelect = genre => {
-    this.setState({ selectGenre: genre, currentPage: 1 });
+    this.setState({ selectGenre: genre, searchQuery: '', currentPage: 1 });
   };
   // 处理 排序事件：排所有的项目，互相互斥，所以排序条件只需保存一条
   handleSort = sortColumn => {
     this.setState({ sortColumn });
   };
-  render() {
-    const { length: count } = this.state.movies;
+  // 预处理数据
+  getPageData = () => {
     const {
-      movies,
+      movies: allMovies,
       pageSize,
       currentPage,
       selectGenre,
-      sortColumn
+      sortColumn,
+      searchQuery,
     } = this.state;
-
-    if (count === 0) return <p>数据库里没有电影哦</p>;
-
     // 预处理：先分类，再排序，最后分页
-    const filtered = selectGenre._id
-      ? movies.filter(m => m.genre._id === selectGenre._id)
-      : movies;
+    let filtered = allMovies;
+    if (searchQuery) {
+      filtered = allMovies.filter(m =>
+        m.title.toLowerCase().startsWith(searchQuery.toLowerCase()),
+      );
+    } else if (selectGenre && selectGenre._id) {
+      filtered = allMovies.filter(m => m.genre._id === selectGenre._id);
+    }
     // lodash 博大精深
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
     const curMovies = paginate(sorted, currentPage, pageSize);
+
+    return { totalCount: filtered.length, data: curMovies };
+  };
+  // 处理搜索输入事件
+  handleSearch = query => {
+    console.log(query);
+    this.setState({ searchQuery: query, searchGenre: null, currentPage: 1 });
+  };
+  render() {
+    const { length: count } = this.state.movies;
+    const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
+
+    if (count === 0) return <p>数据库里没有电影哦</p>;
+
+    const { totalCount, data: curMovies } = this.getPageData();
 
     return (
       <div className="row">
@@ -74,7 +97,15 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <p>目前有{filtered.length}部电影</p>
+          <Link
+            to="/movies/new"
+            className="btn btn-primary"
+            style={{ marginBottom: 20 }}
+          >
+            New Movie
+          </Link>
+          <p>目前有{totalCount}部电影</p>
+          <SearchBox value={searchQuery} onChange={this.handleSearch} />
           <MoviesTable
             movies={curMovies}
             sortColumn={sortColumn}
@@ -82,7 +113,7 @@ class Movies extends Component {
             onSort={this.handleSort}
           />
           <Pagination
-            itemsCount={filtered.length}
+            itemsCount={totalCount}
             pageSize={pageSize}
             currentPage={currentPage}
             onPageChange={this.handlePageChange}
