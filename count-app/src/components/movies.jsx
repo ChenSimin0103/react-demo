@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { getMovies } from '../services/fakeMovieService';
-import { getGenres } from '../services/fakeGenreService';
-import _ from 'lodash';
-import { Link } from 'react-router-dom';
-import Pagination from './common/pagination';
-import ListGroup from './common/listGroup';
-import MoviesTable from './moviesTable';
+import React, { Component } from "react";
+import { getMovies, deleteMovie } from "../services/fakeMovieService";
+import { getGenres } from "../services/genreService";
+import _ from "lodash";
+import { Link } from "react-router-dom";
+import Pagination from "./common/pagination";
+import ListGroup from "./common/listGroup";
+import MoviesTable from "./moviesTable";
 
-import { paginate } from '../utils/paginate';
-import SearchBox from './common/searchBox';
+import { paginate } from "../utils/paginate";
+import SearchBox from "./common/searchBox";
 
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 
 class Movies extends Component {
   state = {
@@ -21,20 +21,30 @@ class Movies extends Component {
     // 这个值初始化为空对象??
     selectGenre: {},
     // 用于排序 asc为顺序排 desc为逆序排
-    sortColumn: { path: 'title', order: 'asc' },
+    sortColumn: { path: "title", order: "asc" },
     // 用于输入名称搜索
-    searchQuery: '',
+    searchQuery: ""
   };
   // 自此钩子中初始化数据
-  componentDidMount() {
-    const genres = [{ name: 'All Genres', _id: '' }, ...getGenres()];
+  async componentDidMount() {
+    const { data } = await getGenres();
+    const genres = [{ name: "All Genres", _id: "" }, ...data];
 
-    this.setState({ movies: getMovies(), genres });
+    const { data: movies } = await getMovies();
+    this.setState({ movies, genres });
   }
-  // 定义方法
-  handleDelete = movie => {
+  // 定义删除方法，加了调接口失败的处理
+  handleDelete = async movie => {
+    const originalMovies = this.state.movies;
     const movies = this.state.movies.filter(m => m._id !== movie._id);
     this.setState({ movies });
+    try {
+      deleteMovie(movie);
+    } catch (ex) {
+      if(ex.response && ex.response.status === 404)
+        toast.error('此电影已被删除')
+      this.setState({ movies: originalMovies });
+    }
   };
   // 分页组件点击事件
   handlePageChange = page => {
@@ -42,7 +52,7 @@ class Movies extends Component {
   };
   // 分类组件点击事件
   handleGenresSelect = genre => {
-    this.setState({ selectGenre: genre, searchQuery: '', currentPage: 1 });
+    this.setState({ selectGenre: genre, searchQuery: "", currentPage: 1 });
   };
   // 处理 排序事件：排所有的项目，互相互斥，所以排序条件只需保存一条
   handleSort = sortColumn => {
@@ -56,13 +66,13 @@ class Movies extends Component {
       currentPage,
       selectGenre,
       sortColumn,
-      searchQuery,
+      searchQuery
     } = this.state;
     // 预处理：先分类，再排序，最后分页
     let filtered = allMovies;
     if (searchQuery) {
       filtered = allMovies.filter(m =>
-        m.title.toLowerCase().startsWith(searchQuery.toLowerCase()),
+        m.title.toLowerCase().startsWith(searchQuery.toLowerCase())
       );
     } else if (selectGenre && selectGenre._id) {
       filtered = allMovies.filter(m => m.genre._id === selectGenre._id);
