@@ -1,3 +1,3 @@
-git add .
-git commit -m "updata in 190322"
+git add -A
+git commit -m "updata in 190327"
 git push origin master

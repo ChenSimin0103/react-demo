@@ -1,14 +1,15 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
-import "./index.css";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+import logger from './services/logService';
 
-import Raven from 'raven-js'
-import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/css/bootstrap.css';
 
-// 安装sentry 库，引入其他 p148
+// 安装sentry 库
+logger.init();
 
 // import Counters from './components/counters'
 
@@ -16,7 +17,7 @@ ReactDOM.render(
   <BrowserRouter>
     <App />
   </BrowserRouter>,
-  document.getElementById("root")
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change
