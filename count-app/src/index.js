@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 // 安装sentry 库
 logger.init();
 
+// 到 p164
 // import Counters from './components/counters'
 
 ReactDOM.render(

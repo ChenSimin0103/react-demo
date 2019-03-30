@@ -9,6 +9,7 @@ function init() {
 }
 
 function log(error) {
+  var a = ''
   console.log(error)
   // Raven.captureException(error);
 }
