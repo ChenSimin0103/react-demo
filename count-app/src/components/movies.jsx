@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { getMovies, deleteMovie } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/movieService";
 import { getGenres } from "../services/genreService";
 import _ from "lodash";
 import { Link } from "react-router-dom";
@@ -39,7 +39,7 @@ class Movies extends Component {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
     this.setState({ movies });
     try {
-      deleteMovie(movie);
+      deleteMovie(movie._id);
     } catch (ex) {
       if(ex.response && ex.response.status === 404)
         toast.error('此电影已被删除')

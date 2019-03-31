@@ -2,6 +2,9 @@ import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
 
+import * as userService from "../services/userService";
+import { toast } from "react-toastify";
+
 class RegisterForm extends Form {
   state = {
     data: {
@@ -25,8 +28,20 @@ class RegisterForm extends Form {
       .label("姓名")
   };
   // 表单之外的业务逻辑
-  doSubmit = () => {
-    console.log("register form submit to server");
+  doSubmit = async () => {
+    try {
+      const response = await userService.register(this.state.data);
+      localStorage.setItem("token", response.headers["x-auth-token"]);
+      console.log(response);
+      this.props.history.push('/')
+    } catch (ex) {
+      console.log(ex.response);
+      if (ex.response && ex.response.status === 400) {
+        const errors = { ...this.state.errors };
+        errors.username = ex.response.data;
+        this.setState({ errors });
+      }
+    }
   };
 
   render() {
