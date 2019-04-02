@@ -2,8 +2,10 @@ import React from 'react';
 import Joi from 'joi-browser';
 import Form from './common/form';
 
+
 import * as userService from '../services/userService';
 import { toast } from 'react-toastify';
+import auth from '../services/authService';
 
 class RegisterForm extends Form {
   state = {
@@ -30,8 +32,10 @@ class RegisterForm extends Form {
   // 表单之外的业务逻辑
   doSubmit = async () => {
     try {
+      // 在此 需要注册成功后，使用 jwt 进行登录
       const response = await userService.register(this.state.data);
-      localStorage.setItem('token', response.headers['x-auth-token']);
+      const jwt = response.headers['x-auth-token'];
+      auth.loginWithJwt(jwt)
       console.log(response);
       // this.props.history.push('/')
       window.location = '/';

@@ -1,6 +1,11 @@
-import axios from "axios";
-import logger from "./logService";
-import { toast } from "react-toastify";
+import axios from 'axios';
+import logger from './logService';
+import { toast } from 'react-toastify';
+
+// 设置 jwt
+function setJwt(jwt) {
+  axios.defaults.headers.common['x-auth-token'] = jwt;
+}
 
 // axios拦截器 用于拦截错误信息
 axios.interceptors.response.use(null, error => {
@@ -11,7 +16,7 @@ axios.interceptors.response.use(null, error => {
 
   if (!expectedError) {
     logger.log(error);
-    toast.error("出现了意料之外的错误！");
+    toast.error('出现了意料之外的错误！');
   }
   return Promise.reject(error);
 });
@@ -20,5 +25,6 @@ export default {
   get: axios.get,
   post: axios.post,
   put: axios.put,
-  delete: axios.delete
+  delete: axios.delete,
+  setJwt,
 };

@@ -1,8 +1,10 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
+
 import Joi from 'joi-browser';
 import Form from './common/form';
 
-import { login } from '../services/authService';
+import auth from '../services/authService';
 
 class LoginFrom extends Form {
   // 这里使用了原型继承的方式，将表单 的大部分逻辑封装在Form里，
@@ -31,12 +33,12 @@ class LoginFrom extends Form {
     try {
       const { data } = this.state;
       // 取出jwt 令牌
-      const re = await login(data.username, data.password);
-      console.log(re);
-      const { data: jwt } = re;
-      localStorage.setItem('token', jwt);
+      await auth.login(data.username, data.password);
+
       // this.props.history.push('/')
-      window.location = '/';
+      // 如果路由信息系保存了 跳转到此页 之前的路由，则跳回那个路由，否则跳主页面
+      const { state } = this.props.location;
+      window.location = state ? state.from.pathname : '/';
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         const errors = { ...this.state.errors };
@@ -47,6 +49,9 @@ class LoginFrom extends Form {
   };
 
   render() {
+    // 如果已登录，进入登录页会重定向去主页
+    if (auth.getCurrentUser()) return <Redirect to="/" />;
+
     return (
       <form onSubmit={this.handleSubmit}>
         {this.renderInput('username', 'Username')}
