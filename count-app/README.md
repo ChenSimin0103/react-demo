@@ -1,5 +1,23 @@
 ## 开发中的要点记录
-1. 组件的props传入值的校验，使用 prop-types 这个库
+
+1. 组件的 props 传入值的校验，使用 prop-types 这个库
+
+2. 项目中使用的后端接口和数据库接口应在固定位置统一维护，因为这是与业务逻辑无关的，相当于项目的配置项
+
+3. 在 setState 时，尽量传入完整的 state 对象，具体操作是，先复制 state（使用扩展运算符），在修改其中某项属性
+
+4. 使用 react-router-dom 来做路由跳转，使用路由组件，并使用路由组件默认传入的 props，来实现路由跳转时和路由跳转后的逻辑
+
+5. 多做抽象，多做重构，一次只开发一小部分功能然后进行测试，开发完一个功能后马上思考是否可以重构（抽象，复用，简化，合理化，语义化，模块解耦，责任分隔）
+
+6. 定义模块时同时使用 `export` 导出每个函数/接口 和 `export default`一次导出所有函数/接口，方便使用时以多种方式导出（`import {...}` ，`import * as className` 或 `import className`）
+
+7. 多使用解构赋值 解构使用次数较多的对象，以简化代码量，解构是重命名使得 代码更加语义化
+
+8. 边界情况总是要去考虑，在所有不稳定的代码中（调接口）使用try-catch包裹
+
+9. css使用：定义一个单独的css文件，引入jsx中
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
