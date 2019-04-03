@@ -1,8 +1,8 @@
 import http from './httpService';
-import { apiUrl } from '../config/config';
+// import { apiUrl } from '../config/config';
 import jwtDecode from 'jwt-decode';
 
-const apiEndpoint = apiUrl + '/auth';
+const apiEndpoint = '/auth';
 const tokenKey = 'token';
 
 // 去除 http 模块 和 auth 模块的双向依赖，将 http 模块设置为 核心模块（不引用其他模块），将http模块需要做的事 暴露为方法，给其他模块做

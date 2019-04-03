@@ -6,7 +6,8 @@ import { toast } from 'react-toastify';
 function setJwt(jwt) {
   axios.defaults.headers.common['x-auth-token'] = jwt;
 }
-
+// 从环境变量中配置 url
+axios.defaults.baseURL = process.env.REACT_APP_API_URL
 // axios拦截器 用于拦截错误信息
 axios.interceptors.response.use(null, error => {
   const expectedError =

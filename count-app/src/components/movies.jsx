@@ -93,7 +93,7 @@ class Movies extends Component {
     const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
     const { user } = this.props;
 
-    if (count === 0) return <p>数据库里没有电影哦</p>;
+    // if (count === 0) return <p>数据库里没有电影哦</p>;
 
     const { totalCount, data: curMovies } = this.getPageData();
 
